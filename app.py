@@ -14,8 +14,8 @@ page = st.sidebar.radio("ページを選択してください", pages)
 
 # 各ページに対応するフォルダパスの設定
 folder_paths = {
-    "tech_matome": st.sidebar.text_input("tech_matomeフォルダのパスを入力してください", value="data"),
-    "ALL": st.sidebar.text_input("ALLフォルダのパスを入力してください", value="data/ALL"),
+    "tech_matome": st.sidebar.text_input("tech_matomeフォルダのパスを入力してください", value="data/tech_matome"),
+    "ALL": st.sidebar.text_input("allフォルダのパスを入力してください", value="data/all"),
     "MACD": st.sidebar.text_input("MACDフォルダのパスを入力してください", value="data/MACD"),
     "EMA": st.sidebar.text_input("EMAフォルダのパスを入力してください", value="data/EMA"),
     "EMA_diff": st.sidebar.text_input("EMA_diffフォルダのパスを入力してください", value="data/EMA_diff"),
