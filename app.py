@@ -1,7 +1,6 @@
 import streamlit as st
 import pandas as pd
 import os
-from st_aggrid import AgGrid, GridOptionsBuilder
 
 # Streamlit app title
 st.title("Backtest Report")
@@ -41,6 +40,7 @@ def load_csv_files(folder):
         st.write(f"エラーが発生しました: {e}")
         return []
 
+"""
 def display_file_with_aggrid(file, folder, code):
     """Display CSV file content using AG Grid and link to corresponding graph."""
     if str(code) in file:
@@ -67,6 +67,7 @@ def display_file_with_aggrid(file, folder, code):
         gridOptions = gb.build()
         
         AgGrid(df, gridOptions=gridOptions, enable_enterprise_modules=True)
+"""
 
 def display_file_simple(file, folder, code, index_column):
     """Display CSV file content as a DataFrame and link to corresponding graph."""
