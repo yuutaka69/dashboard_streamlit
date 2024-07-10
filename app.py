@@ -68,7 +68,6 @@ def display_file_simple(file, folder, code, index_column):
         else:
             st.write(f"Corresponding graph file not found: {graph_file_name}")
 
-st.write("test")
 
 if folder_path and os.path.exists(folder_path):
     csv_files = load_csv_files(folder_path)
