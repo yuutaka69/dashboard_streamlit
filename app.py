@@ -15,6 +15,7 @@ page = st.sidebar.radio("ページを選択してください", pages)
 
 # GitHub repository and folder settings
 github_repo = st.sidebar.text_input("GitHubリポジトリのURLを入力してください", value="https://github.com/yuutaka69/dashboard_streamlit")
+
 folder_paths = {
     "tech_matome": "data",
     "ALL": "data/ALL",
@@ -33,7 +34,7 @@ folder_path = folder_paths[page]
 
 def load_csv_files_from_github(repo, folder):
     """Load all CSV files from the GitHub repository folder."""
-    url = f"{repo}/contents/{folder}"
+    url = f"{repo}/blob/main/{folder}"
     try:
         response = requests.get(url)
         response.raise_for_status()
