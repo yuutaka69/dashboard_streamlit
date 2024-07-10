@@ -40,35 +40,6 @@ def load_csv_files(folder):
         st.write(f"エラーが発生しました: {e}")
         return []
 
-"""
-def display_file_with_aggrid(file, folder, code):
-    """Display CSV file content using AG Grid and link to corresponding graph."""
-    if str(code) in file:
-        file_path = os.path.join(folder, file)
-        df = pd.read_csv(file_path)
-        if df.empty:
-            st.write(f"{file} is empty.")
-            return
-        
-        st.write(f"### {file}")
-        
-        # Display the DataFrame using AG Grid for advanced filtering and sorting
-        gb = GridOptionsBuilder.from_dataframe(df)
-        gb.configure_pagination(paginationAutoPageSize=True)  # Add pagination
-        gb.configure_side_bar()  # Add a sidebar for additional options
-        gb.configure_default_column(groupable=True, value=True, enableRowGroup=True, aggFunc="max", editable=True)
-        
-        # Configure fixed columns
-        if "Name" in df.columns:
-            gb.configure_column("Name", pinned="left")  # Pin 'Name' column to the left
-        if "Code" in df.columns:
-            gb.configure_column("Code", pinned="left")  # Pin 'Code' column to the left
-        
-        gridOptions = gb.build()
-        
-        AgGrid(df, gridOptions=gridOptions, enable_enterprise_modules=True)
-"""
-
 def display_file_simple(file, folder, code, index_column):
     """Display CSV file content as a DataFrame and link to corresponding graph."""
     if str(code) in file:
@@ -103,7 +74,6 @@ if folder_path and os.path.exists(folder_path):
         for csv_file in csv_files:
             if page == "tech_matome":
                 display_file_simple(csv_file, folder_path, code , "Name")
-                #display_file_with_aggrid(csv_file, folder_path, code)
             else:
                 display_file_simple(csv_file, folder_path, code, "_strategy")
     else:
