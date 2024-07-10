@@ -1,0 +1,4 @@
+Start,End,Return [%],Buy & Hold Return [%],Sharpe Ratio,Sortino Ratio,Calmar Ratio,Max. Drawdown [%],Max. Drawdown Duration,# Trades,Win Rate [%],Best Trade [%],Worst Trade [%],Avg. Trade [%],Max. Trade Duration,Avg. Trade Duration,Profit Factor,Expectancy [%],SQN,_strategy
+2022-11-02,2024-06-28,0.046,12.6,1.5271367230619126,inf,,-0.0,,1,100.0,1.7225747960108784,1.7225747960108784,1.7225747960108784,7 days 00:00:00,7 days 00:00:00,,1.7225747960108784,,"MAX30d(tp=10,n=0,sl=7,duration=180,size=100)"
+2022-11-02,2024-06-28,0.046,12.6,1.5271367230619126,inf,,-0.0,,1,100.0,1.7225747960108784,1.7225747960108784,1.7225747960108784,7 days 00:00:00,7 days 00:00:00,,1.7225747960108784,,"MAX30d(tp=20,n=0,sl=7,duration=180,size=100)"
+2022-11-02,2024-06-28,0.046,12.6,1.5271367230619126,inf,,-0.0,,1,100.0,1.7225747960108784,1.7225747960108784,1.7225747960108784,7 days 00:00:00,7 days 00:00:00,,1.7225747960108784,,"MAX30d(tp=30,n=0,sl=7,duration=180,size=100)"
