@@ -26,15 +26,12 @@ folder_paths = {
 # グラフフォルダのパスを入力
 graph_folder_path = st.sidebar.text_input("グラフフォルダのパスを入力してください", value="data/html")
 
-# 選択されたページに対応するフォルダパス
-folder_path = folder_paths[page]
-
 def load_csv_files(folder):
     """Load all CSV files in the folder."""
     try:
         csv_files = [f for f in os.listdir(folder) if f.endswith('.csv')]
         if not csv_files:
-            st.write("フォルダ内にCSVファイルが見つかりませんでした。")
+            st.write(f"{folder}内にCSVファイルが見つかりませんでした。")
         return csv_files
     except Exception as e:
         st.write(f"エラーが発生しました: {e}")
@@ -68,16 +65,35 @@ def display_file_simple(file, folder, code, index_column):
         else:
             st.write(f"Corresponding graph file not found: {graph_file_name}")
 
-
-if folder_path and os.path.exists(folder_path):
-    csv_files = load_csv_files(folder_path)
-    if csv_files:
-        for csv_file in csv_files:
-            if page == "tech_matome":
-                display_file_simple(csv_file, folder_path, code , "Name")
+def search_and_display_all_folders(code, folder_paths):
+    """Search for the code in all folders and display the corresponding files."""
+    for page, folder_path in folder_paths.items():
+        if folder_path and os.path.exists(folder_path):
+            st.write(f"## Searching in {page}")
+            csv_files = load_csv_files(folder_path)
+            if csv_files:
+                for csv_file in csv_files:
+                    if page == "tech_matome":
+                        display_file_simple(csv_file, folder_path, code , "Name")
+                    else:
+                        display_file_simple(csv_file, folder_path, code, "_strategy")
             else:
-                display_file_simple(csv_file, folder_path, code, "_strategy")
-    else:
-        st.write("フォルダ内にCSVファイルが見つかりませんでした。")
+                st.write(f"{folder_path}内にCSVファイルが見つかりませんでした。")
+        else:
+            st.write(f"有効なフォルダパスを入力してください: {folder_path}")
+
+if code:
+    search_and_display_all_folders(code, folder_paths)
 else:
-    st.write("有効なフォルダパスを入力してください。")
+    if folder_paths[page] and os.path.exists(folder_paths[page]):
+        csv_files = load_csv_files(folder_paths[page])
+        if csv_files:
+            for csv_file in csv_files:
+                if page == "tech_matome":
+                    display_file_simple(csv_file, folder_paths[page], code , "Name")
+                else:
+                    display_file_simple(csv_file, folder_paths[page], code, "_strategy")
+        else:
+            st.write(f"{folder_paths[page]}内にCSVファイルが見つかりませんでした。")
+    else:
+        st.write("有効なフォルダパスを入力してください。")
