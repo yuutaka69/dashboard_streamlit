@@ -2,6 +2,9 @@ import streamlit as st
 import pandas as pd
 import os
 
+# Set Streamlit page configuration to wide mode
+st.set_page_config(layout="wide")
+
 # Streamlit app title
 st.title("Backtest Report")
 
