@@ -70,17 +70,14 @@ def display_file_simple(file, folder, code, index_column):
         
         st.write(f"### {file}")
         
-        # Create HTML table with custom styling
-        html = "<table>"
-        for i, row in df.iterrows():
-            html += "<tr>"
-            for col, val in row.items():
-                html += f"<td>{val}</td>"
-            html += "</tr>"
-        html += "</table>"
+        # Add color bar to columns containing "Win Rate" or "SQN"
+        styled_df = df.style
+        for column in df.columns:
+            if "Win Rate" in column or "SQN" in column:
+                styled_df = styled_df.bar(subset=[column], color='#d65f5f' if "Win Rate" in column else '#5fba7d')
         
-        # Display HTML table
-        st.write(html, unsafe_allow_html=True)
+        st.write(styled_df)
+        #st.table(styled_df)
         
         # Construct graph file path
         graph_file_name = "modified_" + file.split("_")[0] + '_1d.html'
