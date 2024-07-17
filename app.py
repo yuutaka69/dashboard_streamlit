@@ -57,7 +57,14 @@ def display_file_simple(file, folder, code, index_column):
             st.write(f"Warning: Index column '{index_column}' not found in the DataFrame.")
         
         st.write(f"### {file}")
-        st.write(df)
+
+        # Add color bar to columns containing "Win Rate" or "SQN"
+        styled_df = df.style
+        for column in df.columns:
+            if "Win Rate" in column or "SQN" in column:
+                styled_df = styled_df.bar(subset=[column], color='#d65f5f' if "Win Rate" in column else '#5fba7d')
+
+        st.write(styled_df)
 
         # Construct graph file path
         graph_file_name = "modified_" + file.split("_")[0] + '_1d.html'
