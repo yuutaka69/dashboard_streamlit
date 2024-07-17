@@ -44,10 +44,22 @@ def display_file_simple(file, folder, code, index_column):
     """Display CSV file content as a DataFrame and link to corresponding graph."""
     if str(code) in file:
         file_path = os.path.join(folder, file)
-        df = pd.read_csv(file_path)
         
-        if df.empty:
-            st.write(f"{file} is empty.")
+        # Check if the file exists and is not empty
+        if not os.path.exists(file_path):
+            st.write(f"Error: {file} does not exist.")
+            return
+        if os.path.getsize(file_path) == 0:
+            st.write(f"Error: {file} is empty.")
+            return
+        
+        try:
+            df = pd.read_csv(file_path)
+        except pd.errors.EmptyDataError:
+            st.write(f"Error: {file} contains no data.")
+            return
+        except Exception as e:
+            st.write(f"Error: Failed to read {file}. Exception: {e}")
             return
         
         # Set index to '_strategy' or 'Name' column if specified
@@ -57,15 +69,14 @@ def display_file_simple(file, folder, code, index_column):
             st.write(f"Warning: Index column '{index_column}' not found in the DataFrame.")
         
         st.write(f"### {file}")
-        """
+        
         # Add color bar to columns containing "Win Rate" or "SQN"
         styled_df = df.style
         for column in df.columns:
             if "Win Rate" in column or "SQN" in column:
                 styled_df = styled_df.bar(subset=[column], color='#d65f5f' if "Win Rate" in column else '#5fba7d')
-        """
-        #st.write(styled_df)
-        st.write(df)
+        
+        st.write(styled_df)
         # Construct graph file path
         graph_file_name = "modified_" + file.split("_")[0] + '_1d.html'
         graph_file_path = os.path.join(graph_folder_path, graph_file_name)
