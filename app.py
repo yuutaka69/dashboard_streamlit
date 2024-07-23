@@ -103,12 +103,11 @@ def pull_from_github():
     """Pull the latest changes from the GitHub repository."""
     try:
         result = subprocess.run(["git", "pull"], capture_output=True, text=True, check=True)
-        st.write(f"GitHubからの更新が成功しました: {result.stdout}")
+        st.write(f"GitHubからの更新が成功しました")
     except subprocess.CalledProcessError as e:
-        st.write(f"GitHubからの更新に失敗しました: {e.stderr}")
+        st.write(f"GitHubからの更新に失敗しました")
 
 # Add a button to reload data
-reload_data = st.sidebar.button("データをリロード")
 update_data = st.sidebar.button("GitHubからデータを更新")
 
 # Update data from GitHub if button is clicked
@@ -116,7 +115,7 @@ if update_data:
     pull_from_github()
 
 # Display data based on user input
-if code or reload_data:
+if code:
     search_and_display_all_folders(code, folder_paths)
 else:
     if folder_paths[page] and os.path.exists(folder_paths[page]):
