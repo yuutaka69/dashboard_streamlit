@@ -18,17 +18,17 @@ page = st.sidebar.radio("ページを選択してください", pages)
 
 # 各ページに対応するフォルダパスの設定
 folder_paths = {
-    "tech_matome": "data/tech_matome"),
-    "ALL": "data/all"),
-    "MACD": "data/MACD"),
-    "EMA": "data/EMA"),
-    "EMA_diff": "data/EMA_diff"),
-    "RSI": "data/RSI"),
-    "MAX30d": "data/MAX30d"),
+    "tech_matome": "data/tech_matome",
+    "ALL": "data/all",
+    "MACD": "data/MACD",
+    "EMA": "data/EMA",
+    "EMA_diff": "data/EMA_diff",
+    "RSI": "data/RSI",
+    "MAX30d": "data/MAX30d",
 }
 
-# グラフフォルダのパスを入力
-graph_folder_path = st.sidebar.text_input("グラフフォルダのパスを入力してください", value="data/html")
+# グラフフォルダのパスを設定
+graph_folder_path = "data/html"
 
 def load_csv_files(folder):
     """Load all CSV files in the folder."""
@@ -72,7 +72,6 @@ def display_file_simple(file, folder, code, index_column):
         st.write(f"### {file}")
         
         st.write(df)
-        #st.table(df)
         
         # Construct graph file path
         graph_file_name = "modified_" + file.split("_")[0] + '_1d.html'
