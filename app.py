@@ -9,25 +9,19 @@ st.set_page_config(layout="wide")
 # Streamlit app title
 st.title("Backtest Report")
 
-# サイドバーに銘柄コードを入力
+# Display mode selection in the sidebar
+display_mode = st.sidebar.radio("表示モードを選択してください", ["1画面", "2画面"])
+
+# Input for stock code in the sidebar
 code = st.sidebar.text_input("銘柄コード")
 
-# サイドバーにページ選択
-pages = ["tech_matome", "ALL", "MACD", "EMA", "EMA_diff", "RSI", "MAX30d"]
-page = st.sidebar.radio("ページを選択してください", pages)
-
-# 各ページに対応するフォルダパスの設定
+# Folder paths for CSV files
 folder_paths = {
     "tech_matome": "data/tech_matome",
-    "ALL": "data/all",
-    "MACD": "data/MACD",
-    "EMA": "data/EMA",
-    "EMA_diff": "data/EMA_diff",
-    "RSI": "data/RSI",
-    "MAX30d": "data/MAX30d",
+    "all_data": "data/all"  # Add the folder path for all data
 }
 
-# グラフフォルダのパスを設定
+# Graph folder path
 graph_folder_path = "data/html"
 
 def load_csv_files(folder):
@@ -41,7 +35,7 @@ def load_csv_files(folder):
         st.write(f"エラーが発生しました: {e}")
         return []
 
-def display_file_simple(file, folder, code, index_column):
+def display_file_simple(file, folder, code):
     """Display CSV file content as a DataFrame and link to corresponding graph."""
     if str(code) in file:
         file_path = os.path.join(folder, file)
@@ -63,14 +57,13 @@ def display_file_simple(file, folder, code, index_column):
             st.write(f"Error: Failed to read {file}. Exception: {e}")
             return
         
-        # Set index to '_strategy' or 'Name' column if specified
-        if index_column in df.columns:
-            df.set_index(index_column, inplace=True)
+        # Set index to '_strategy' if it exists
+        if "_strategy" in df.columns:
+            df.set_index("_strategy", inplace=True)
         else:
-            st.write(f"Warning: Index column '{index_column}' not found in the DataFrame.")
+            st.write(f"Warning: '_strategy' column not found in the DataFrame.")
         
         st.write(f"### {file}")
-        
         st.write(df)
         
         # Construct graph file path
@@ -82,22 +75,92 @@ def display_file_simple(file, folder, code, index_column):
         else:
             st.write(f"Corresponding graph file not found: {graph_file_name}")
 
-def search_and_display_all_folders(code, folder_paths):
-    """Search for the code in all folders and display the corresponding files."""
-    for page, folder_path in folder_paths.items():
-        if folder_path and os.path.exists(folder_path):
-            st.write(f"## Searching in {page}")
-            csv_files = load_csv_files(folder_path)
-            if csv_files:
-                for csv_file in csv_files:
-                    if page == "tech_matome":
-                        display_file_simple(csv_file, folder_path, code , "Name")
-                    else:
-                        display_file_simple(csv_file, folder_path, code, "_strategy")
-            else:
-                st.write(f"{folder_path}内にCSVファイルが見つかりませんでした。")
+
+def display_tech_matome():
+    """Display tech_matome table directly."""
+    st.header("tech_matome")
+    tech_matome_files = load_csv_files(folder_paths["tech_matome"])
+    
+    if tech_matome_files:
+        for tech_matome_file in tech_matome_files:
+            file_path = os.path.join(folder_paths["tech_matome"], tech_matome_file)
+            
+            # Check if the file exists and is not empty
+            if not os.path.exists(file_path):
+                st.write(f"Error: {tech_matome_file} does not exist.")
+                continue
+            if os.path.getsize(file_path) == 0:
+                st.write(f"Error: {tech_matome_file} is empty.")
+                continue
+            
+            try:
+                df = pd.read_csv(file_path)
+                # Set index to 'Name' column if specified
+                if "Name" in df.columns:
+                    df.set_index("Name", inplace=True)
+                else:
+                    st.write(f"Warning: Index column 'Name' not found in the DataFrame.")
+                
+                st.write(f"### {tech_matome_file}")
+                st.write(df)
+                
+                # Construct graph file path
+                graph_file_name = "modified_" + tech_matome_file.split("_")[0] + '_1d.html'
+                graph_file_path = os.path.join(graph_folder_path, graph_file_name)
+                
+                if os.path.exists(graph_file_path):
+                    st.markdown(f"[View corresponding graph file]({graph_file_path})")
+                else:
+                    st.write(f"Corresponding graph file not found: {graph_file_name}")
+                    
+            except pd.errors.EmptyDataError:
+                st.write(f"Error: {tech_matome_file} contains no data.")
+                continue
+            except Exception as e:
+                st.write(f"Error: Failed to read {tech_matome_file}. Exception: {e}")
+    else:
+        st.write(f"{folder_paths['tech_matome']}内にCSVファイルが見つかりませんでした。")
+
+
+def search_and_display_files(code, folder_paths):
+    """Search for the code in the folder and display the corresponding files."""
+    folder_path = folder_paths["tech_matome"]
+    if folder_path and os.path.exists(folder_path):
+        st.write(f"## Searching in tech_matome")
+        csv_files = load_csv_files(folder_path)
+        if csv_files:
+            for csv_file in csv_files:
+                display_file_simple(csv_file, folder_path, code)
         else:
-            st.write(f"有効なフォルダパスを入力してください: {folder_path}")
+            st.write(f"{folder_path}内にCSVファイルが見つかりませんでした。")
+    else:
+        st.write(f"有効なフォルダパスを入力してください: {folder_path}")
+
+def search_all_data(code):
+    """Search for the code in all_data folder and display results."""
+    folder_path = folder_paths["all_data"]
+    if folder_path and os.path.exists(folder_path):
+        st.write(f"## Search Results in all_data")
+        csv_files = load_csv_files(folder_path)
+        search_results = []
+        for csv_file in csv_files:
+            file_path = os.path.join(folder_path, csv_file)
+            try:
+                df = pd.read_csv(file_path)
+                if code in df.to_string():
+                    if "_strategy" in df.columns:
+                        df.set_index("_strategy", inplace=True)
+                    search_results.append(df)
+            except pd.errors.EmptyDataError:
+                continue
+            except Exception as e:
+                st.write(f"Error: Failed to read {file_path}. Exception: {e}")
+
+        if search_results:
+            combined_df = pd.concat(search_results, ignore_index=False)
+            st.write(combined_df)
+        else:
+            st.write("No results found.")
 
 def pull_from_github():
     """Pull the latest changes from the GitHub repository."""
@@ -114,19 +177,29 @@ update_data = st.sidebar.button("GitHubからデータを更新")
 if update_data:
     pull_from_github()
 
-# Display data based on user input
-if code:
-    search_and_display_all_folders(code, folder_paths)
-else:
-    if folder_paths[page] and os.path.exists(folder_paths[page]):
-        csv_files = load_csv_files(folder_paths[page])
-        if csv_files:
-            for csv_file in csv_files:
-                if page == "tech_matome":
-                    display_file_simple(csv_file, folder_paths[page], code , "Name")
-                else:
-                    display_file_simple(csv_file, folder_paths[page], code, "_strategy")
-        else:
-            st.write(f"{folder_paths[page]}内にCSVファイルが見つかりませんでした。")
+# Display content based on the selected display mode
+if display_mode == "1画面":
+    # Always display tech_matome table
+    display_tech_matome()
+
+    # Display search results if code is provided
+    if code:
+        search_all_data(code)
     else:
-        st.write("有効なフォルダパスを入力してください。")
+        st.write("銘柄コードを入力してください。")
+
+elif display_mode == "2画面":
+    # Create two columns
+    col1, col2 = st.columns(2)
+
+    # Display tech_matome page on the left
+    with col1:
+        display_tech_matome()
+
+    # Display search results or prompt to enter code on the right
+    with col2:
+        st.header("検索結果")
+        if code:
+            search_all_data(code)
+        else:
+            st.write("銘柄コードを入力してください。")
