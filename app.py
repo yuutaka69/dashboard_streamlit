@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 import os
+import subprocess
 
 # Set Streamlit page configuration to wide mode
 st.set_page_config(layout="wide")
@@ -82,7 +83,6 @@ def display_file_simple(file, folder, code, index_column):
         else:
             st.write(f"Corresponding graph file not found: {graph_file_name}")
 
-
 def search_and_display_all_folders(code, folder_paths):
     """Search for the code in all folders and display the corresponding files."""
     for page, folder_path in folder_paths.items():
@@ -100,7 +100,24 @@ def search_and_display_all_folders(code, folder_paths):
         else:
             st.write(f"有効なフォルダパスを入力してください: {folder_path}")
 
-if code:
+def pull_from_github():
+    """Pull the latest changes from the GitHub repository."""
+    try:
+        result = subprocess.run(["git", "pull"], capture_output=True, text=True, check=True)
+        st.write(f"GitHubからの更新が成功しました: {result.stdout}")
+    except subprocess.CalledProcessError as e:
+        st.write(f"GitHubからの更新に失敗しました: {e.stderr}")
+
+# Add a button to reload data
+reload_data = st.sidebar.button("データをリロード")
+update_data = st.sidebar.button("GitHubからデータを更新")
+
+# Update data from GitHub if button is clicked
+if update_data:
+    pull_from_github()
+
+# Display data based on user input
+if code or reload_data:
     search_and_display_all_folders(code, folder_paths)
 else:
     if folder_paths[page] and os.path.exists(folder_paths[page]):
