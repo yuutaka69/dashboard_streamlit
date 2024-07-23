@@ -75,7 +75,6 @@ def display_file_simple(file, folder, code):
         else:
             st.write(f"Corresponding graph file not found: {graph_file_name}")
 
-
 def display_tech_matome():
     """Display tech_matome table directly."""
     st.header("tech_matome")
@@ -120,7 +119,6 @@ def display_tech_matome():
                 st.write(f"Error: Failed to read {tech_matome_file}. Exception: {e}")
     else:
         st.write(f"{folder_paths['tech_matome']}内にCSVファイルが見つかりませんでした。")
-
 
 def search_and_display_files(code, folder_paths):
     """Search for the code in the folder and display the corresponding files."""
@@ -179,14 +177,12 @@ if update_data:
 
 # Display content based on the selected display mode
 if display_mode == "1画面":
-    # Always display tech_matome table
-    display_tech_matome()
-
-    # Display search results if code is provided
+    # Check if a stock code is provided
     if code:
         search_all_data(code)
     else:
-        st.write("銘柄コードを入力してください。")
+        # Always display tech_matome table if no code is provided
+        display_tech_matome()
 
 elif display_mode == "2画面":
     # Create two columns
