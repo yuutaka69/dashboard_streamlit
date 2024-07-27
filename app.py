@@ -142,10 +142,10 @@ def search_all_data(code):
         csv_files = load_csv_files(folder_path)
         search_results = []
         for csv_file in csv_files:
-            file_path = os.path.join(folder_path, csv_file)
+            file_path = folder_path + "/" +  csv_file
             try:
                 df = pd.read_csv(file_path)
-                if code in df.to_string():
+                if str(code) in df.to_string():
                     if "_strategy" in df.columns:
                         df.set_index("_strategy", inplace=True)
                     search_results.append(df)
