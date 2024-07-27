@@ -141,6 +141,8 @@ def search_all_data(code):
         st.write(f"## Search Results in all_data")
         csv_files = load_csv_files(folder_path)
         search_results = []
+        code_lower = code.lower()  # Convert search term to lowercase
+
         for csv_file in csv_files:
             file_path = os.path.join(folder_path, csv_file)
             try:
@@ -148,9 +150,10 @@ def search_all_data(code):
                 df = pd.read_csv(file_path)
                 st.write(df.head())  # Display the first few rows for debugging
                 
-                # Convert all dataframe values to string for comparison
-                df_as_string = df.astype(str)
-                if code in df_as_string.to_string():
+                # Convert all dataframe values to string and lowercase for comparison
+                df_as_string = df.astype(str).apply(lambda x: x.str.lower())
+                
+                if code_lower in df_as_string.to_string():
                     if "_strategy" in df.columns:
                         df.set_index("_strategy", inplace=True)
                     st.write(csv_file)
@@ -168,6 +171,7 @@ def search_all_data(code):
             st.write("No results found.")
     else:
         st.write(f"Folder path does not exist: {folder_path}")
+
 
 
 def pull_from_github():
