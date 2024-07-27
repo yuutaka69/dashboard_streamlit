@@ -77,7 +77,6 @@ def display_file_simple(file, folder, code):
 
 def display_tech_matome():
     """Display tech_matome table directly."""
-    st.header("tech_matome")
     tech_matome_files = load_csv_files(folder_paths["tech_matome"])
     
     if tech_matome_files:
@@ -138,7 +137,6 @@ def search_all_data(code):
     """Search for the code in the all_data folder and display results."""
     folder_path = folder_paths.get("all_data")
     if folder_path and os.path.exists(folder_path):
-        st.write("## Search Results in all_data")
         csv_files = load_csv_files(folder_path)
         results_found = False
 
