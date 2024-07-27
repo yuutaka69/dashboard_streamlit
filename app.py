@@ -148,6 +148,7 @@ def search_all_data(code):
                 if str(code) in df.to_string():
                     if "_strategy" in df.columns:
                         df.set_index("_strategy", inplace=True)
+                    st.write(csv_file)
                     search_results.append(df)
             except pd.errors.EmptyDataError:
                 continue
