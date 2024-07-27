@@ -142,15 +142,21 @@ def search_all_data(code):
         csv_files = load_csv_files(folder_path)
         search_results = []
         for csv_file in csv_files:
-            file_path = folder_path + "/" +  csv_file
+            file_path = os.path.join(folder_path, csv_file)
             try:
+                st.write(f"Reading file: {file_path}")  # Debugging output
                 df = pd.read_csv(file_path)
-                if str(code) in df.to_string():
+                st.write(df.head())  # Display the first few rows for debugging
+                
+                # Convert all dataframe values to string for comparison
+                df_as_string = df.astype(str)
+                if code in df_as_string.to_string():
                     if "_strategy" in df.columns:
                         df.set_index("_strategy", inplace=True)
                     st.write(csv_file)
                     search_results.append(df)
             except pd.errors.EmptyDataError:
+                st.write(f"File {file_path} is empty.")  # Debugging output
                 continue
             except Exception as e:
                 st.write(f"Error: Failed to read {file_path}. Exception: {e}")
@@ -160,6 +166,9 @@ def search_all_data(code):
             st.write(combined_df)
         else:
             st.write("No results found.")
+    else:
+        st.write(f"Folder path does not exist: {folder_path}")
+
 
 def pull_from_github():
     """Pull the latest changes from the GitHub repository."""
