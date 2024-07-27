@@ -141,25 +141,16 @@ def search_all_data(code):
         st.write(f"## Search Results in all_data")
         csv_files = load_csv_files(folder_path)
         search_results = []
-        code_lower = code.lower()  # Convert search term to lowercase
-
         for csv_file in csv_files:
-            file_path = os.path.join(folder_path, csv_file)
+            file_path = folder_path + "/" +  csv_file
             try:
-                st.write(f"Reading file: {file_path}")  # Debugging output
                 df = pd.read_csv(file_path)
-                st.write(df.head())  # Display the first few rows for debugging
-                
-                # Convert all dataframe values to string and lowercase for comparison
-                df_as_string = df.astype(str).apply(lambda x: x.str.lower())
-                
-                if code_lower in df_as_string.to_string():
+                if str(code) in str(csv_file):
                     if "_strategy" in df.columns:
                         df.set_index("_strategy", inplace=True)
                     st.write(csv_file)
                     search_results.append(df)
             except pd.errors.EmptyDataError:
-                st.write(f"File {file_path} is empty.")  # Debugging output
                 continue
             except Exception as e:
                 st.write(f"Error: Failed to read {file_path}. Exception: {e}")
