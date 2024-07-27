@@ -135,33 +135,34 @@ def search_and_display_files(code, folder_paths):
         st.write(f"有効なフォルダパスを入力してください: {folder_path}")
 
 def search_all_data(code):
-    """Search for the code in all_data folder and display results."""
-    folder_path = folder_paths["all_data"]
+    """Search for the code in the all_data folder and display results."""
+    folder_path = folder_paths.get("all_data")
     if folder_path and os.path.exists(folder_path):
-        st.write(f"## Search Results in all_data")
+        st.write("## Search Results in all_data")
         csv_files = load_csv_files(folder_path)
-        search_results = []
+        results_found = False
+
         for csv_file in csv_files:
-            file_path = folder_path + "/" +  csv_file
+            file_path = os.path.join(folder_path, csv_file)
             try:
                 df = pd.read_csv(file_path)
-                if str(code) in str(csv_file):
+                # Check if the code is in the file name or data frame
+                if str(code) in str(csv_file) or df.apply(lambda row: row.astype(str).str.contains(str(code)).any(), axis=1).any():
                     if "_strategy" in df.columns:
                         df.set_index("_strategy", inplace=True)
-                    st.write(csv_file)
-                    search_results.append(df)
+                    st.write(f"### {csv_file}")
+                    st.write(df)
+                    results_found = True
             except pd.errors.EmptyDataError:
-                continue
+                st.write(f"File {csv_file} is empty.")
             except Exception as e:
                 st.write(f"Error: Failed to read {file_path}. Exception: {e}")
 
-        if search_results:
-            combined_df = pd.concat(search_results, ignore_index=False)
-            st.write(combined_df)
-        else:
+        if not results_found:
             st.write("No results found.")
     else:
         st.write(f"Folder path does not exist: {folder_path}")
+
 
 
 
